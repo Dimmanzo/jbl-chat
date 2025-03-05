@@ -41,7 +41,10 @@ def login_view(request):
     """
     if request.method == "POST":
         try:
-            data = json.loads(request.body)
+            if request.content_type == "application/json":
+                data = json.loads(request.body)  # JSON Data
+            else:
+                data = request.POST  # Form-data
             username, password = data.get("username"), data.get("password")
 
             user = authenticate(request, username=username, password=password)
@@ -76,8 +79,9 @@ def logout_view(request):
         logout(request)
         return render(request, "chat/login.html")  # Swap chat with login form
 
+    # If someone visits /chat/logout/ directly via GET, show a friendly message
     return JsonResponse(
-            {"message": "Use POST request to logout."}
+            {"message": "Use POST request to logout."}, status=405
         )
 
 

@@ -1,9 +1,14 @@
 import json
 
 from django.db.models import Q
+from django.shortcuts import (
+    render,
+    get_object_or_404
+)
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
 from rest_framework.permissions import IsAuthenticated
@@ -32,15 +37,8 @@ def home_view(request):
 @csrf_exempt
 def login_view(request):
     """
-    Handles user login.
-    - For GET requests, returns a message explaining how to log in.
-    - For POST requests, checks username/password and starts a session.
+    Handles user login. If not logged in, shows the login form.
     """
-    if request.method == "GET":
-        return JsonResponse(
-            {"message": "Use POST with 'username' and 'password' to log in."}
-        )
-
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -49,44 +47,50 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
-                return JsonResponse(
-                    {"message": "Successfully logged in!"},
-                    status=200
+                users = User.objects.exclude(id=user.id)
+                # Load chat UI
+                return render(
+                    request, "chat/chat.html", {"users": users}
                 )
-            return JsonResponse(
-                {"error": "Invalid username or password"},
-                status=400
+
+            return render(
+                request, "chat/login.html",
+                {"error": "Invalid username or password"}
             )
+
         except json.JSONDecodeError:
             return JsonResponse(
                 {"error": "Invalid JSON format"},
                 status=400)
 
-    # If the request method is something else, return an error.
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+    # Returns login form on GET request
+    return render(request, "chat/login.html")
 
 
 @csrf_exempt
 def logout_view(request):
     """
-    Handles user logout.
-    - GET: Returns instructions for logging out.
-    - POST: Logs the user out and ends the session.
+    Logs the user out and dynamically returns the login page via HTMX.
     """
-    if request.method == "GET":
-        return JsonResponse(
+    if request.method == "POST":
+        logout(request)
+        return render(request, "chat/login.html")  # Swap chat with login form
+
+    return JsonResponse(
             {"message": "Use POST request to logout."}
         )
 
-    if request.method == "POST":
-        logout(request)
-        return JsonResponse(
-            {"message": "You have been logged out!"},
-            status=200
-        )
 
-    # If the request method is something else, return an error.
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+@login_required
+def chat_view(request):
+    """
+    Loads the chat page with a user list if logged in,
+    otherwise shows the login form.
+    """
+    users = User.objects.exclude(
+        id=request.user.id
+    )  # Show all users except the logged-in user
+    return render(request, "chat/chat.html", {"users": users})
 
 
 @api_view(["GET"])
@@ -110,11 +114,12 @@ def fetch_chat_history(request, user_id):
     Retrieves past messages between the logged-in user and another user.
     """
     current_user = request.user  # Get the logged-in user
+    recipient = get_object_or_404(User, id=user_id)  # Ensure recipient
 
     # Fetch messages where the logged-in user is involved (sender or receiver)
     conversation = Message.objects.filter(
-        Q(sender=current_user, receiver_id=user_id) |
-        Q(sender_id=user_id, receiver=current_user)
+        Q(sender=current_user, receiver=recipient) |
+        Q(sender=recipient, receiver=current_user)
     ).order_by("timestamp")
 
     # Convert message objects into a structured JSON response
@@ -123,7 +128,7 @@ def fetch_chat_history(request, user_id):
             "from": msg.sender.username,
             "to": msg.receiver.username,
             "message": msg.message,
-            "sent_at": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            "sent_at": msg.timestamp.isoformat()
         }
         for msg in conversation
     ]

@@ -19,7 +19,7 @@ class Message(models.Model):
 
     # Shows who sent the message, who received it, and a short preview.
     def __str__(self):
-        sender = self.sender.username
-        receiver = self.receiver.username
-        preview = self.message[:30]
-        return f"{sender} → {receiver}: {preview}"
+        return (
+            f"{self.sender.username} → {self.receiver.username}: "
+            f"{self.message[:30]}"
+        )

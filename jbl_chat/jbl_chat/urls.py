@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from chat.views import home_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chat.urls')),
+    path('', home_view, name='home_view')  # Starter endpoint
 ]
+
+# Custom 404 handler (should be in the main URL file)
+handler404 = "chat.views.handle_not_found"

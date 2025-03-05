@@ -7,16 +7,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-# API endpoint that returns a list of all users (requires authetication).
-def get_all_users(request):
-    # Fetches all users returning only id's and usernames.
-    user_data = User.objects.values("id", "username")
-    return JsonResponse(
-        list(user_data),
-        safe=False
-        )
+def home_view(request):
+    """"
+    Starter endpoint that gives basic API info.
+    """
+    return JsonResponse({
+        "message": "Welcome to the JBL Chat API!",
+        "info": "HTMX-powered chat interface is coming sooon!",
+        "endpoints": {
+            "chat": "/chat/",  # Future UI
+            "login": "/chat/login",
+            "logout": "/chat/logout",
+            "users": "/chat/users"
+        }
+    })
 
 
 @csrf_exempt
@@ -77,3 +81,26 @@ def logout_view(request):
 
     # If the request method is something else, return an error.
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_users(request):
+    """
+    API endpoint that returns a list of all users (requires authetication).
+    Fetches all users returning only id's and usernames.
+    """
+    user_data = User.objects.values("id", "username")
+    return JsonResponse(
+        list(user_data),
+        safe=False
+        )
+
+
+def handle_not_found(request, exception):
+    """"
+    Handles requests to non-existing API endpoints and returns a JSON response.
+    """
+    return JsonResponse(
+        {"error": "Endpoint not found"}, status=404
+    )

@@ -88,13 +88,17 @@ def logout_view(request):
 @login_required
 def chat_view(request):
     """
-    Loads the chat page with a user list if logged in,
-    otherwise shows the login form.
+    Displays chat interface with a list of users and latest messages.
     """
-    users = User.objects.exclude(
-        id=request.user.id
-    )  # Show all users except the logged-in user
-    return render(request, "chat/chat.html", {"users": users})
+    current_user = request.user
+
+    # Get all users except the logged-in user
+    users = User.objects.exclude(id=current_user.id)
+
+    return render(
+        request, "chat/chat.html",
+        {"users": users}
+    )
 
 
 @api_view(["GET"])
@@ -126,8 +130,14 @@ def fetch_chat_history(request, user_id):
         Q(sender=recipient, receiver=current_user)
     ).order_by("timestamp")
 
-    return render(
-        {"messages": conversation, "currrent_user": current_user}
+    return JsonResponse(
+        {"messages": [
+            {"from": msg.sender.username,
+                "to": msg.receiver.username,
+                "message": msg.message}
+            for msg in conversation
+        ]},
+        safe=False
     )
 
 

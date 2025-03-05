@@ -13,32 +13,43 @@
 </head>
 
 <body>
-    <div class="container" id="chat-container">
-        <h2>Welcome, {{ request.user.username }}!</h2>
-
-        <!-- Logout Button -->
-        <button hx-post="{% url 'logout_view' %}" hx-target="#chat-container" hx-swap="outerHTML">
-            Logout
-        </button>
-
-        <h3>Users:</h3>
-        <ul id="user-list">
-            {% for user in users %}
-            <li hx-get="{% url 'fetch_chat_history' user.id %}" hx-target="#chat-messages" hx-swap="innerHTML">
-                {{ user.username }}
-            </li>
-            {% endfor %}
-        </ul>
-
-        <h3>Messages:</h3>
-        <div id="chat-messages">
-            <p>Select a user to view messages.</p>
+    <div class="chat-container">
+        <!-- Sidebar with Users -->
+        <div class="sidebar">
+            <h3>Users</h3>
+            <ul id="user-list">
+                {% for user in users %}
+                <li>
+                    <button hx-get="{% url 'fetch_chat_history' user.id %}" hx-target="#chat-messages"
+                        hx-swap="innerHTML">
+                        {{ user.username }}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="htmx-indicator" style="display: none;">
-            Loading...
+        <!-- Main Chat Window -->
+        <div class="chat-box">
+            <div class="chat-header">
+                <h2>Welcome, {{ request.user.username }}!</h2>
+                <button class="logout-button" hx-post="{% url 'logout_view' %}" hx-target="body" hx-swap="outerHTML">
+                    Logout
+                </button>
+            </div>
+
+            <div id="chat-messages" class="messages-box">
+                <p>Select a user to start chatting.</p>
+            </div>
+
+            <!-- Message Input Form -->
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Type your message..." required>
+                <button type="submit">Send</button>
+            </form>
         </div>
+    </div>
 </body>
+
 
 </html>

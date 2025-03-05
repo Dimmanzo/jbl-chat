@@ -1,10 +1,15 @@
 import json
+
+from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from rest_framework.decorators import api_view, permission_classes
+
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+
+from chat.models import Message
 
 
 def home_view(request):
@@ -18,7 +23,8 @@ def home_view(request):
             "chat": "/chat/",  # Future UI
             "login": "/chat/login",
             "logout": "/chat/logout",
-            "users": "/chat/users"
+            "users": "/chat/users",
+            "messages": "/chat/messages/{user_id}/"
         }
     })
 
@@ -95,6 +101,34 @@ def get_all_users(request):
         list(user_data),
         safe=False
         )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def fetch_chat_history(request, user_id):
+    """
+    Retrieves past messages between the logged-in user and another user.
+    """
+    current_user = request.user  # Get the logged-in user
+
+    # Fetch messages where the logged-in user is involved (sender or receiver)
+    conversation = Message.objects.filter(
+        Q(sender=current_user, receiver_id=user_id) |
+        Q(sender_id=user_id, receiver=current_user)
+    ).order_by("timestamp")
+
+    # Convert message objects into a structured JSON response
+    message_data = [
+        {
+            "from": msg.sender.username,
+            "to": msg.receiver.username,
+            "message": msg.message,
+            "sent_at": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for msg in conversation
+    ]
+
+    return JsonResponse(message_data, safe=False)
 
 
 def handle_not_found(request, exception):

@@ -9,24 +9,27 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"
         integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous">
     </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body>
-    <h2>Login</h2>
+    <div class="container">
+        <h2>Login</h2>
 
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-    {% endif %}
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
 
-    <form hx-post="{% url 'login_view' %}" hx-target="body" hx-swap="outerHTML">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        <form hx-post="{% url 'login_view' %}" hx-target="body" hx-swap="outerHTML">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
 
-        <button type="submit">Login</button>
-    </form>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
 
 </html>

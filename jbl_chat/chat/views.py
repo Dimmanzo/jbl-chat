@@ -126,18 +126,9 @@ def fetch_chat_history(request, user_id):
         Q(sender=recipient, receiver=current_user)
     ).order_by("timestamp")
 
-    # Convert message objects into a structured JSON response
-    message_data = [
-        {
-            "from": msg.sender.username,
-            "to": msg.receiver.username,
-            "message": msg.message,
-            "sent_at": msg.timestamp.isoformat()
-        }
-        for msg in conversation
-    ]
-
-    return JsonResponse(message_data, safe=False)
+    return render(
+        {"messages": conversation, "currrent_user": current_user}
+    )
 
 
 def handle_not_found(request, exception):

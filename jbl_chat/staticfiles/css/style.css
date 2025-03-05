@@ -1,0 +1,79 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Centered Container */
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Form Elements */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input,
+button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Chat Messages */
+#chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    background: white;
+    padding: 10px;
+}
+
+/* Message Styling */
+.message {
+    padding: 5px;
+    margin: 3px 0;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+.sent {
+    background-color: #dcf8c6;
+    text-align: right;
+}
+
+.received {
+    background-color: #f1f0f0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+    }
+
+    #chat-messages {
+        height: 250px;
+    }
+}

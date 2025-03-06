@@ -66,6 +66,8 @@ body {
     width: 25%;
     background: #f0f0f0;
     padding: 10px;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 #user-list {
@@ -198,5 +200,9 @@ body {
     .sidebar {
         width: 100%;
         text-align: center;
+    }
+
+    #user-list button {
+        width: 80%;
     }
 }

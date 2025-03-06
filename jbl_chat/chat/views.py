@@ -24,13 +24,14 @@ def home_view(request):
     """
     return JsonResponse({
         "message": "Welcome to the JBL Chat API!",
-        "info": "HTMX-powered chat interface is coming sooon!",
+        "info": "Chat interface is live! Go to /chat/ to start chatting.",
         "endpoints": {
             "chat": "/chat/",
             "login": "/chat/login",
             "logout": "/chat/logout",
             "users": "/chat/users",
-            "messages": "/chat/messages/{user_id}/"
+            "messages": "/chat/messages/{user_id}/",
+            "send_message": "/chat/send_message"
         }
     })
 
@@ -145,7 +146,7 @@ def send_message(request):
 
     # If no user is selected or message is empty, return empty response
     if not receiver_id or not message_text:
-        # Just refresh without error
+        # Refreshes without error
         return render(request, "chat/messages.html", {"messages": []})
 
     receiver = get_object_or_404(User, id=receiver_id)

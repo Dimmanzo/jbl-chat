@@ -1,9 +1,12 @@
 Django==3.2.8  # https://www.djangoproject.com/
 djangorestframework==3.12.4  # https://github.com/encode/django-rest-framework
+pytz>=2025.1  # Timezone support for Django
+sqlparse>=0.5.3  # SQL parsing for Django
+asgiref>=3.3.2,<4  # ASGI support for Django
 
 # Additional Dependencies:
-dj-database-url==0.5.0
-python-dotenv==1.0.1
-whitenoise==6.8.2
-psycopg2-binary==2.9.9
-gunicorn>=22.0.0
+dj-database-url==0.5.0  # Parse DATABASE_URL for Heroku
+python-dotenv==1.0.1  # Load .env files
+whitenoise==6.8.2  # Serve static files
+psycopg2-binary==2.9.9  # PostgreSQL adapter
+gunicorn>=22.0.0  # WSGI server for Heroku

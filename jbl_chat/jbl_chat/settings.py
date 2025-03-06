@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "0.0.0.0",
     "127.0.0.1",
-] + os.getenv("ALLOWED_HOST", "").split(",")
+    "jbl-chat-7b6d7e263a2d.herokuapp.com"
+]
 
 
 # Application definition

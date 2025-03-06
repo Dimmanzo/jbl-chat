@@ -3,6 +3,7 @@ import json
 from django.db.models import Q
 from django.shortcuts import (
     render,
+    redirect,
     get_object_or_404
 )
 from django.http import JsonResponse
@@ -50,11 +51,9 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
-                users = User.objects.exclude(id=user.id)
-                # Load chat UI
-                return render(
-                    request, "chat/chat.html", {"users": users}
-                )
+
+                # Redirect to chat after login
+                return redirect("chat_view")
 
             return render(
                 request, "chat/login.html",
@@ -90,10 +89,8 @@ def chat_view(request):
     """
     Displays chat interface with a list of users and latest messages.
     """
-    current_user = request.user
-
     # Get all users except the logged-in user
-    users = User.objects.exclude(id=current_user.id)
+    users = User.objects.exclude(id=request.user.id)
 
     return render(
         request, "chat/chat.html",

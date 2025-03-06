@@ -20,7 +20,7 @@
         <p style="color: red;">{{ error }}</p>
         {% endif %}
 
-        <form hx-post="{% url 'login_view' %}" hx-target="body" hx-swap="outerHTML">
+        <form method="POST" action="{% url 'login_view' %}">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 

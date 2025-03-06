@@ -143,11 +143,10 @@ def send_message(request):
     receiver_id = request.POST.get("receiver_id")
     message_text = request.POST.get("message")
 
+    # If no user is selected or message is empty, return empty response
     if not receiver_id or not message_text:
-        return JsonResponse(
-            {"error": "Invalid data"},
-            status=400
-        )
+        # Just refresh without error
+        return render(request, "chat/messages.html", {"messages": []})
 
     receiver = get_object_or_404(User, id=receiver_id)
     Message.objects.create(

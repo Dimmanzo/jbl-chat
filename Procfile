@@ -1,0 +1,1 @@
+web: gunicorn jbl_chat.wsgi --log-file -

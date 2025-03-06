@@ -41,6 +41,10 @@ def login_view(request):
     """
     Handles user login. If not logged in, shows the login form.
     """
+    if request.user.is_authenticated:
+        # Redirect logged in users to chat
+        return redirect("chat_view")
+
     if request.method == "POST":
         try:
             if request.content_type == "application/json":
@@ -128,6 +132,14 @@ def fetch_chat_history(request, user_id):
         Q(sender=recipient, receiver=current_user)
     ).order_by("timestamp")
 
+    if "HX-Request" not in request.headers:
+        # If request is NOT from HTMX, return JSON response
+        return JsonResponse(
+            list(conversation.values()),
+            safe=False
+        )
+
+    # If request IS from HTMX, render messages template
     return render(
         request, "chat/messages.html",
         {"messages": conversation, "current_user": current_user}

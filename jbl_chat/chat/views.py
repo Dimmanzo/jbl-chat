@@ -26,7 +26,7 @@ def home_view(request):
         "message": "Welcome to the JBL Chat API!",
         "info": "HTMX-powered chat interface is coming sooon!",
         "endpoints": {
-            "chat": "/chat/",  # Future UI
+            "chat": "/chat/",
             "login": "/chat/login",
             "logout": "/chat/logout",
             "users": "/chat/users",
@@ -127,14 +127,44 @@ def fetch_chat_history(request, user_id):
         Q(sender=recipient, receiver=current_user)
     ).order_by("timestamp")
 
-    return JsonResponse(
-        {"messages": [
-            {"from": msg.sender.username,
-                "to": msg.receiver.username,
-                "message": msg.message}
-            for msg in conversation
-        ]},
-        safe=False
+    return render(
+        request, "chat/messages.html",
+        {"messages": conversation, "current_user": current_user}
+    )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def send_message(request):
+    """
+    Handles sending a new message via HTMX.
+    """
+    current_user = request.user
+    receiver_id = request.POST.get("receiver_id")
+    message_text = request.POST.get("message")
+
+    if not receiver_id or not message_text:
+        return JsonResponse(
+            {"error": "Invalid data"},
+            status=400
+        )
+
+    receiver = get_object_or_404(User, id=receiver_id)
+    Message.objects.create(
+        sender=current_user,
+        receiver=receiver,
+        message=message_text
+    )
+
+    # Fetch updated conversation
+    conversation = Message.objects.filter(
+        Q(sender=current_user, receiver=receiver) |
+        Q(sender=receiver, receiver=current_user)
+    ).order_by("timestamp")
+
+    return render(
+        request, "chat/messages.html",
+        {"messages": conversation, "current_user": current_user}
     )
 
 

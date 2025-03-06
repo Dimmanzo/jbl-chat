@@ -1,0 +1,8 @@
+{% for msg in messages %}
+<div class="message {% if msg.sender == current_user %}sent{% else %}received{% endif %}">
+    <span>{{ msg.message }}</span>
+    <span class="msg-time">{{ msg.timestamp|date:"Y-m-d H:i" }}</span>
+</div>
+{% empty %}
+<p>No messages yet.</p>
+{% endfor %}

@@ -4,7 +4,8 @@ from .views import (
     logout_view,
     get_all_users,
     fetch_chat_history,
-    chat_view
+    chat_view,
+    send_message
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
         fetch_chat_history,
         name="fetch_chat_history"
     ),
+    path("send_message/", send_message, name="send_message"),
 ]

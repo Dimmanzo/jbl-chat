@@ -53,7 +53,7 @@ body {
 /* Main Chat Container */
 .chat-container {
     display: flex;
-    width: 90%;
+    width: 100%;
     max-width: 800px;
     background: white;
     border-radius: 8px;
@@ -63,7 +63,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-    width: 30%;
+    width: 25%;
     background: #f0f0f0;
     padding: 10px;
 }
@@ -108,11 +108,48 @@ body {
 /* Messages */
 .messages-box {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     padding: 10px;
     background: #fff;
     border-radius: 5px;
     border: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+/* Messages Styling */
+.message {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+    font-size: 14px;
+    word-wrap: break-word;
+    display: inline-block;
+}
+
+/* Sent Messages */
+.sent {
+    background: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+/* Received Messages */
+.received {
+    background: #f1f1f1;
+    color: black;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+/* Timestamp Styling */
+.msg-time {
+    font-size: 12px;
+    opacity: 0.7;
+    display: block;
+    margin-top: 3px;
 }
 
 /* Message Form */
@@ -136,10 +173,6 @@ body {
     color: white;
     cursor: pointer;
     border-radius: 5px;
-}
-
-#message-form button:hover {
-    background: #0056b3;
 }
 
 /* Logout Button */

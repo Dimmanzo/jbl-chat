@@ -21,7 +21,8 @@
                 {% for user in users %}
                 <li>
                     <button hx-get="{% url 'fetch_chat_history' user.id %}" hx-target="#chat-messages"
-                        hx-swap="innerHTML">
+                        hx-swap="innerHTML"
+                        hx-on:click="document.getElementById('receiver-input').value = {{ user.id }}">
                         {{ user.username }}
                     </button>
                 </li>
@@ -43,8 +44,10 @@
             </div>
 
             <!-- Message Input Form -->
-            <form id="message-form">
-                <input type="text" id="message-input" placeholder="Type your message..." required>
+            <form id="message-form" hx-post="{% url 'send_message' %}" hx-params="*" hx-target="#chat-messages"
+                hx-swap="innerHTML" hx-on::after-request="this.reset();">
+                <input type="hidden" name="receiver_id" id="receiver-input">
+                <input type="text" name="message" id="message-input" placeholder="Type your message..." required>
                 <button type="submit">Send</button>
             </form>
         </div>

@@ -1,2 +1,8 @@
 Django==3.2.8  # https://www.djangoproject.com/
 djangorestframework==3.12.4  # https://github.com/encode/django-rest-framework
+
+# Additional Dependencies:
+dj-database-url==0.5.0
+python-dotenv==1.0.1
+whitenoise==6.8.2
+psycopg2-binary==2.9.9

@@ -91,12 +91,9 @@ body {
     background: #0056b3;
 }
 
-#user-list .selected-user {
-    background-color: #181A18;
-}
-
-#user-list button.selected-user:hover {
-    background: #333;
+.selected-user {
+    background-color: #0056b3;
+    font-weight: bold;
 }
 
 /* Chat Box */

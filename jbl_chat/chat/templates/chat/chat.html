@@ -24,9 +24,19 @@
             <ul id="user-list">
                 {% for user in users %}
                 <li>
-                    <button hx-get="{% url 'fetch_chat_history' user.id %}" hx-target="#chat-messages"
-                        hx-swap="innerHTML"
-                        hx-on:click="document.getElementById('receiver-input').value = {{ user.id }}">
+                    <button class="user-button" hx-get="{% url 'fetch_chat_history' user.id %}"
+                        hx-target="#chat-messages" hx-swap="innerHTML"
+                        data-fetch-url="{% url 'fetch_chat_history' user.id %}" hx-on:click="
+                            document.getElementById('receiver-input').value = {{ user.id }};
+                            const poller = document.getElementById('poller');
+                            poller.setAttribute('hx-get', this.getAttribute('data-fetch-url'));
+                            htmx.process(poller);
+                            // Selection logic
+                            document.querySelectorAll('#user-list .user-button').forEach(function (btn) {
+                                btn.classList.remove('selected-user');
+                            });
+                            this.classList.add('selected-user');
+                        ">
                         {{ user.username }}
                     </button>
                 </li>
@@ -43,9 +53,13 @@
                 </button>
             </div>
 
-            <div id="chat-messages" class="messages-box">
+            <div id="chat-messages" class="messages-box" hx-on::after-settle="this.scrollTop = this.scrollHeight;">
                 <p>Select a user to start chatting.</p>
             </div>
+
+            <!-- Poller Div for Real-Time Updates -->
+            <div id="poller" style="display: none;" hx-trigger="every 3s" hx-target="#chat-messages"
+                hx-swap="innerHTML"></div>
 
             <!-- Message Input Form -->
             <form id="message-form" hx-post="{% url 'send_message' %}" hx-params="*" hx-target="#chat-messages"
@@ -58,6 +72,5 @@
         </div>
     </div>
 </body>
-
 
 </html>

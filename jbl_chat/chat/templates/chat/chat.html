@@ -49,8 +49,8 @@
                 </button>
             </div>
 
-            <div id="chat-messages" class="messages-box" hx-on::after-settle="this.scrollTop = this.scrollHeight;">
-                <p>Select a user to start chatting.</p>
+            <div id="chat-messages" class="messages-box"
+                hx-on::after-settle="if (this.scrollHeight - this.scrollTop === this.clientHeight) { this.scrollTop = this.scrollHeight; }">
             </div>
 
             <!-- Poller Div for Real-Time Updates -->

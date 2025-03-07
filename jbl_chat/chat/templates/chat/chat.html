@@ -6,13 +6,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <script src="https://unpkg.com/htmx.org@2.0.4"
-        integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous">
-    </script>
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4"
+        integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous">
+    </script>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
@@ -26,17 +32,7 @@
                 <li>
                     <button class="user-button" hx-get="{% url 'fetch_chat_history' user.id %}"
                         hx-target="#chat-messages" hx-swap="innerHTML"
-                        data-fetch-url="{% url 'fetch_chat_history' user.id %}" hx-on:click="
-                            document.getElementById('receiver-input').value = {{ user.id }};
-                            const poller = document.getElementById('poller');
-                            poller.setAttribute('hx-get', this.getAttribute('data-fetch-url'));
-                            htmx.process(poller);
-                            // Selection logic
-                            document.querySelectorAll('#user-list .user-button').forEach(function (btn) {
-                                btn.classList.remove('selected-user');
-                            });
-                            this.classList.add('selected-user');
-                        ">
+                        data-fetch-url="{% url 'fetch_chat_history' user.id %}" data-user-id="{{ user.id }}">
                         {{ user.username }}
                     </button>
                 </li>
@@ -72,5 +68,39 @@
         </div>
     </div>
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Gets the user list container
+        let userList = document.getElementById("user-list");
+
+        // If user list is missing, logs an error and stop execution
+        if (!userList) {
+            console.error("User list not found.");
+            return;
+        }
+
+        // Handles user selection and chat updates
+        userList.addEventListener("click", function (event) {
+            let button = event.target.closest(".user-button");
+            if (!button) return;
+
+            // Updates the hidden input with selected user's ID
+            document.getElementById("receiver-input").value = button.getAttribute("data-user-id");
+
+            // Updates poller to fetch messages in real-time
+            const poller = document.getElementById("poller");
+            if (poller) {
+                poller.setAttribute("hx-get", button.getAttribute("data-fetch-url"));
+                htmx.process(poller);
+            }
+
+            // Removes selection from all buttons, then highlight the clicked one
+            document.querySelectorAll(".user-button").forEach(btn => btn.classList.remove(
+                "selected-user"));
+            button.classList.add("selected-user");
+        });
+    });
+</script>
 
 </html>

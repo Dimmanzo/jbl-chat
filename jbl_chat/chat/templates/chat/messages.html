@@ -1,8 +1,10 @@
 {% for msg in messages %}
+<!-- Display each chat message -->
 <div class="message {% if msg.sender == current_user %}sent{% else %}received{% endif %}">
     <span>{{ msg.message }}</span>
     <span class="msg-time">{{ msg.timestamp|date:"M d, H:i" }}</span>
 </div>
 {% empty %}
+<!-- Show a placeholder if there are no messages -->
 <p>No messages yet.</p>
 {% endfor %}

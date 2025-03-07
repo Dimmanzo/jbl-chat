@@ -9,10 +9,17 @@ from .views import (
 )
 
 urlpatterns = [
+    # Main chat view
     path("", chat_view, name="chat_view"),
+
+    # Auth routes
     path("login/", login_view, name="login_view"),
     path("logout/", logout_view, name="logout_view"),
+
+    # List of all users
     path("users/", get_all_users, name="get_all_users"),
+
+    # Chat functionality
     path(
         "messages/<int:user_id>/",
         fetch_chat_history,

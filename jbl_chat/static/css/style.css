@@ -92,11 +92,11 @@ body {
 }
 
 #user-list .selected-user {
-    background-color: #181A18;
+    background-color: #181A18 !important;
 }
 
 #user-list button.selected-user:hover {
-    background: #333;
+    background: #333 !important;
 }
 
 /* Chat Box */
@@ -203,6 +203,7 @@ body {
 @media (max-width: 600px) {
     .chat-container {
         flex-direction: column;
+        height: 100vh;
     }
 
     .sidebar {
